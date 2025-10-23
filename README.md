@@ -3,7 +3,7 @@ The mod is designed to process and display data received from the server about p
 
 Thus, this mod can be useful for:
 - Administrators and developers who want to check the UUID, ping, and game mode of players;
-- Players who are being tracked in the game by monitoring silent joins/leaves, game mode, and everyone who is currently nearby.
+- Players who are being stalked in the game can now track silent entry/exit, game mode, and everyone who is currently nearby.
 
 The mod includes the following commands:
 - <code>/ms ping [player]</code> - Displays the ping of all or a target;
