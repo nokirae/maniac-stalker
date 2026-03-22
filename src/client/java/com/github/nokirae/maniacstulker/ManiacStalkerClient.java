@@ -86,7 +86,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
 
                         MutableText fullMessage = Text.literal("").formatted(Formatting.GOLD);
                         for (PlayerListEntry playerEntry : sortedPlayers) {
-                            String name = playerEntry.getProfile().getName();
+                            String name = playerEntry.getProfile().name();
                             int latency = playerEntry.getLatency();
                             fullMessage.append(Text.literal("⏺ ").formatted(Formatting.AQUA));
                             fullMessage.append(Text.literal(name).formatted(Formatting.GOLD));
@@ -109,7 +109,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                             }
 
                             PlayerListEntry targetPlayer = client.getNetworkHandler().getPlayerList().stream()
-                                    .filter(p -> p.getProfile().getName().equalsIgnoreCase(playerName))
+                                    .filter(p -> p.getProfile().name().equalsIgnoreCase(playerName))
                                     .findFirst()
                                     .orElse(null);
 
@@ -165,7 +165,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                     
                     for (AbstractClientPlayerEntity ACPE : Near) {
                         MutableText message = Text.literal("⏺ ").formatted(Formatting.AQUA)
-                                .append(Text.literal(ACPE.getGameProfile().getName()).formatted(Formatting.GREEN));
+                                .append(Text.literal(ACPE.getGameProfile().name()).formatted(Formatting.GREEN));
                         client.player.sendMessage(message, false);
                     }
 
@@ -183,9 +183,9 @@ public class ManiacStalkerClient implements ClientModInitializer {
                     
                     for (PlayerListEntry PLE : Players) {
                         MutableText message = Text.literal("⏺ ").formatted(Formatting.AQUA);
-                        message.append(Text.literal(PLE.getProfile().getName()).formatted(Formatting.GREEN));
+                        message.append(Text.literal(PLE.getProfile().name()).formatted(Formatting.GREEN));
                         message.append(Text.literal(" | "+ PLE.getGameMode().asString() + " | " + PLE.getLatency() + " ⏳").formatted(Formatting.GRAY));
-                        message.append(Text.literal("\n" + PLE.getProfile().getId().toString() + "\n").formatted(Formatting.GRAY));
+                        message.append(Text.literal("\n" + PLE.getProfile().id().toString() + "\n").formatted(Formatting.GRAY));
                         client.player.sendMessage(message, false);
                     }
 
@@ -230,56 +230,75 @@ public class ManiacStalkerClient implements ClientModInitializer {
                     
                     return 1;
                 })
-                    .then(argument("module", StringArgumentType.greedyString())
-                        .executes(context -> {
-                            String moduleName = StringArgumentType.getString(context, "module");
-                            final MinecraftClient client = context.getSource().getClient();
+                    .then(literal("JoinLeave").executes(context -> {
+                        final MinecraftClient client = context.getSource().getClient();
 
-                            if (client.player == null || client.getNetworkHandler() == null) {
-                                context.getSource().sendError(Text.literal("Not connected..."));
-                                return 0;
-                            }
-                            
-                            MutableText message = Text.literal("⏺ ").formatted(Formatting.AQUA);
-                            
-                            switch (moduleName.toLowerCase()) {
-                                case "joinleave":
-                                    moduleJoinLeave = !moduleJoinLeave;
-                                    if (moduleJoinLeave) {
-                                        message.append(Text.literal("JoinLeave").formatted(Formatting.GREEN));
-                                    }
-                                    else {
-                                        message.append(Text.literal("JoinLeave").formatted(Formatting.RED));
-                                    }
-                                    break;
-                                case "gamemode":
-                                    moduleGameMode = !moduleGameMode;
-                                    if (moduleGameMode) {
-                                        message.append(Text.literal("GameMode").formatted(Formatting.GREEN));
-                                    }
-                                    else {
-                                        message.append(Text.literal("GameMode").formatted(Formatting.RED));
-                                    }
-                                    break;
-                                case "near":
-                                    moduleNear = !moduleNear;
-                                    if (moduleNear) {
-                                        message.append(Text.literal("Near").formatted(Formatting.GREEN));
-                                    }
-                                    else {
-                                        message.append(Text.literal("Near").formatted(Formatting.RED));
-                                    }
-                                    break;
-                                default:
-                                    message.append(Text.literal("JoinLeave | GameMode | Near").formatted(Formatting.YELLOW));
-                                    
-                            }
-                            
-                            client.player.sendMessage(message, false);
-                            
-                            return 1;
-                        })
-                    )
+                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
+                            context.getSource().sendError(Text.literal("Not connected..."));
+                            return 0;
+                        }
+
+                        moduleJoinLeave = !moduleJoinLeave;
+
+                        MutableText message = Text.literal("⏺").formatted(Formatting.AQUA);
+
+                        if (moduleJoinLeave) {
+                            message.append(Text.literal(" JoinLeave").formatted(Formatting.GREEN));
+                        }
+                        else {
+                            message.append(Text.literal(" JoinLeave").formatted(Formatting.RED));
+                        }
+                        
+                        client.player.sendMessage(message, false);
+
+                        return 1;
+                    }))
+                    .then(literal("GameMode").executes(context -> {
+                        final MinecraftClient client = context.getSource().getClient();
+
+                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
+                            context.getSource().sendError(Text.literal("Not connected..."));
+                            return 0;
+                        }
+
+                        moduleGameMode = !moduleGameMode;
+
+                        MutableText message = Text.literal("⏺").formatted(Formatting.AQUA);
+
+                        if (moduleGameMode) {
+                            message.append(Text.literal(" GameMode").formatted(Formatting.GREEN));
+                        }
+                        else {
+                            message.append(Text.literal(" GameMode").formatted(Formatting.RED));
+                        }
+                        
+                        client.player.sendMessage(message, false);
+
+                        return 1;
+                    }))
+                    .then(literal("Near").executes(context -> {
+                        final MinecraftClient client = context.getSource().getClient();
+
+                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
+                            context.getSource().sendError(Text.literal("Not connected..."));
+                            return 0;
+                        }
+
+                        moduleNear = !moduleNear;
+
+                        MutableText message = Text.literal("⏺").formatted(Formatting.AQUA);
+
+                        if (moduleNear) {
+                            message.append(Text.literal(" Near").formatted(Formatting.GREEN));
+                        }
+                        else {
+                            message.append(Text.literal(" Near").formatted(Formatting.RED));
+                        }
+
+                        client.player.sendMessage(message, false);
+
+                        return 1;
+                    }))
                 )
                 .then(literal("uwu").executes(context -> {
                     final MinecraftClient client = context.getSource().getClient();
@@ -293,7 +312,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                     
                     for (PlayerListEntry PLE : Players) {
                         MutableText message = Text.literal("⏺ ").formatted(Formatting.AQUA);
-                        message.append(Text.literal(PLE.getProfile().getName()).formatted(Formatting.GREEN));
+                        message.append(Text.literal(PLE.getProfile().name()).formatted(Formatting.GREEN));
                         message.append(Text.literal(" - ").formatted(Formatting.GRAY));
                         Text displayNameComponent = PLE.getDisplayName();
     
@@ -302,11 +321,11 @@ public class ManiacStalkerClient implements ClientModInitializer {
                         if (displayNameComponent != null) {
                             fullRowText = displayNameComponent.getString();
                         } else {
-                            fullRowText = PLE.getProfile().getName();
+                            fullRowText = PLE.getProfile().name();
                         }
                         
                         if (fullRowText.contains("♂")) {
-                            if (PLE.getSkinTextures().model().getName().contains("slim")) {
+                            if (PLE.getSkinTextures().model().name().contains("SLIM")) {
                                 message.append(Text.literal("Femboy Material").formatted(Formatting.GOLD));
                             }
 
@@ -316,7 +335,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                         }
                         
                         else if (fullRowText.contains("♀")) {
-                            if (PLE.getSkinTextures().model().getName().contains("slim")) {
+                            if (PLE.getSkinTextures().model().name().contains("SLIM")) {
                                 message.append(Text.literal("Girl").formatted(Formatting.LIGHT_PURPLE));
                             }
 
@@ -326,7 +345,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                         }
                         
                         else if (fullRowText.contains("⚥")) {
-                            if (PLE.getSkinTextures().model().getName().contains("slim")) {
+                            if (PLE.getSkinTextures().model().name().contains("SLIM")) {
                                 message.append(Text.literal("Femboy").formatted(Formatting.LIGHT_PURPLE));
                             }
 
@@ -336,7 +355,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                         }
                         
                         else {
-                            if (PLE.getSkinTextures().model().getName().contains("slim")) {
+                            if (PLE.getSkinTextures().model().name().contains("SLIM")) {
                                 message.append(Text.literal("Girl (Femboy?)").formatted(Formatting.LIGHT_PURPLE));
                             }
 
@@ -382,8 +401,8 @@ public class ManiacStalkerClient implements ClientModInitializer {
         if (moduleJoinLeave) {
             Map<UUID, String> currentPlayerMap = client.getNetworkHandler().getPlayerList().stream()
                     .collect(Collectors.toMap(
-                            entry -> entry.getProfile().getId(),
-                            entry -> entry.getProfile().getName()
+                            entry -> entry.getProfile().id(),
+                            entry -> entry.getProfile().name()
                     ));
 
             if (lastPlayerMap.isEmpty() && !currentPlayerMap.isEmpty()) {
@@ -433,7 +452,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                 }
             }
 
-            lastPlayerMap = currentPlayerMap;
+            lastPlayerMap = new HashMap<>(currentPlayerMap);
 
             if (!lastMessages.isEmpty()) {
                 Iterator<Map.Entry<String, Integer>> iterator = lastMessages.entrySet().iterator();
@@ -454,8 +473,9 @@ public class ManiacStalkerClient implements ClientModInitializer {
         if (moduleGameMode) {
             Map<String, String> currentGameModeMap = client.getNetworkHandler().getPlayerList().stream()
                 .collect(Collectors.toMap(
-                        entry -> entry.getProfile().getName(), 
-                        entry -> entry.getGameMode().asString()
+                        entry -> entry.getProfile().name(), 
+                        entry -> entry.getGameMode().asString(),
+                        (existing, replacement) -> replacement
                 ));
         
             if (lastGameModeMap.isEmpty() && !currentGameModeMap.isEmpty()) {
@@ -490,7 +510,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                     message.append(Text.literal(String.valueOf(NearPlayers.size())).formatted(Formatting.RED));
                     message.append(Text.literal(" |").formatted(Formatting.GRAY));
                     for (AbstractClientPlayerEntity ACPE : NearPlayers) {
-                        message.append(Text.literal(" " + ACPE.getGameProfile().getName()).formatted(Formatting.GRAY));
+                        message.append(Text.literal(" " + ACPE.getGameProfile().name()).formatted(Formatting.GRAY));
                     }
                     client.player.sendMessage(message, false);
                 }
@@ -500,7 +520,7 @@ public class ManiacStalkerClient implements ClientModInitializer {
                     message.append(Text.literal(String.valueOf(NearPlayers.size())).formatted(Formatting.GREEN));
                     message.append(Text.literal(" |").formatted(Formatting.GRAY));
                     for (AbstractClientPlayerEntity ACPE : NearPlayers) {
-                        message.append(Text.literal(" " + ACPE.getGameProfile().getName()).formatted(Formatting.GRAY));
+                        message.append(Text.literal(" " + ACPE.getGameProfile().name()).formatted(Formatting.GRAY));
                     }
                     client.player.sendMessage(message, false);
                 }
