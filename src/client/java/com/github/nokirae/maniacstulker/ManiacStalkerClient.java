@@ -1,5 +1,7 @@
 package com.github.nokirae.maniacstulker;
 
+import com.github.nokirae.maniacstulker.Config;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.message.v1.ClientReceiveMessageEvents;
@@ -369,6 +371,50 @@ public class ManiacStalkerClient implements ClientModInitializer {
 
                     return 1;
                 }))
+                        
+                .then(literal("brand")
+                    .executes(context -> {
+                        final MinecraftClient client = context.getSource().getClient();
+                        if (client.player == null || client.getNetworkHandler() == null) {
+                            context.getSource().sendError(Text.literal("Not connected..."));
+                            return 0;
+                        }
+
+                        MutableText fullMessage = Text.literal("").formatted(Formatting.GOLD);
+
+                        fullMessage.append(Text.literal("⏺ ").formatted(Formatting.AQUA));
+                        fullMessage.append(Text.literal("Brand").formatted(Formatting.GOLD));
+                        fullMessage.append(Text.literal(" - ").formatted(Formatting.GRAY));
+                        fullMessage.append(Text.literal(Config.customBrand).formatted(Formatting.GOLD));
+                        
+                        context.getSource().sendFeedback(fullMessage);
+                        return 1;
+                    })
+                    .then(argument("newBrand", StringArgumentType.greedyString())
+                        .executes(context -> {
+                            String newBrand = StringArgumentType.getString(context, "newBrand");
+                            final MinecraftClient client = context.getSource().getClient();
+
+                            if (client.player == null || client.getNetworkHandler() == null) {
+                                context.getSource().sendError(Text.literal("Not connected..."));
+                                return 0;
+                            }
+                            
+                            Config.customBrand = newBrand;
+                            
+                            MutableText fullMessage = Text.literal("").formatted(Formatting.GOLD);
+
+                            fullMessage.append(Text.literal("⏺ ").formatted(Formatting.AQUA));
+                            fullMessage.append(Text.literal("New Brand").formatted(Formatting.GOLD));
+                            fullMessage.append(Text.literal(" - ").formatted(Formatting.GRAY));
+                            fullMessage.append(Text.literal(Config.customBrand).formatted(Formatting.GOLD));
+                            fullMessage.append(Text.literal(" (Please reconnect)").formatted(Formatting.GRAY));
+
+                            context.getSource().sendFeedback(fullMessage);
+                            
+                            return 1;
+                        }))
+                )
             );
         });
     }

@@ -3,7 +3,8 @@
 	"package": "com.github.nokirae.maniacstulker.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
-		"ExampleClientMixin"
+		"ExampleClientMixin",
+                "ClientBrandRetrieverMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
