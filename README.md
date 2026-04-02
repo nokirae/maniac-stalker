@@ -6,6 +6,7 @@ Thus, this mod can be useful for:
 - Players who are being stalked in the game can now track silent entry/exit, game mode, and everyone who is currently nearby.
 
 The mod includes the following commands:
+- <code>/ms brand [newBrand]</code> - Show/set your client brand (for server information update needs reconnect);
 - <code>/ms ping [player]</code> - Displays the ping of all or a target;
 - <code>/ms check</code> - Displays and compares the number of players on the server and nearby;
 - <code>/ms near</code> - Displays everyone nearby;
