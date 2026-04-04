@@ -1,4 +1,9 @@
-# Maniac-Stalker Fabric мод (Minecraft 1.21.7+)
+<p align="center">
+  <img src=./src/main/resources/assets/maniac-stalker/icon.png>
+  <br>
+  <h1 align="center">Maniac-Stalker Fabric мод (Minecraft 1.21.7+)</h1>
+</p>
+
 Мод спрямований на обробку та вивід даних отриманих від сервера стосовно гравців (зазвичай від TAB).
 
 Таким чином цей мод може бути корисним для:
