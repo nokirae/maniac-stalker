@@ -1,4 +1,9 @@
-# Maniac-Stalker Fabric mod (Minecraft 1.21.7+)
+<p align="center">
+  <img src=./src/main/resources/assets/maniac-stalker/icon.png>
+  <br>
+  <h1 align="center">Maniac-Stalker Fabric mod (Minecraft 1.21.7+)</h1>
+</p>
+
 The mod is designed to process and display data received from the server about players (usually from TAB).
 
 Thus, this mod can be useful for:
