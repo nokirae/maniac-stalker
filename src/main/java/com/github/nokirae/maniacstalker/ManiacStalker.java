@@ -1,4 +1,4 @@
-package com.github.nokirae.maniacstulker;
+package com.github.nokirae.maniacstalker;
 
 import net.fabricmc.api.ModInitializer;
 
@@ -19,6 +19,6 @@ public class ManiacStalker implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello Fabric world!");
+		LOGGER.info("Hello to You!");
 	}
 }

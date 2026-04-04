@@ -5,8 +5,8 @@
 	"name": "Maniac Stalker",
 	"description": "79 centimeters :3",
 	"authors": [
-                "Gemini 2.5 Pro",
-		"nokirae"
+        "Gemini 2.5 Pro",
+        "nokirae"
 	],
 	"contact": {
 		"homepage": "https://github.com/nokirae/maniac-stalker/releases",
@@ -17,10 +17,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.github.nokirae.maniacstulker.ManiacStalker"
+			"com.github.nokirae.maniacstalker.ManiacStalker"
 		],
 		"client": [
-			"com.github.nokirae.maniacstulker.ManiacStalkerClient"
+			"com.github.nokirae.maniacstalker.ManiacStalkerClient"
 		]
 	},
 	"mixins": [
