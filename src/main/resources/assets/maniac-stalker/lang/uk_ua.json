@@ -1,0 +1,48 @@
+{
+  "modmenu.name.maniacstalker": "Ман'як-Сталкер",
+  "modmenu.description.maniacstalker": "79 сантиметрів :3",
+
+  "silentJoin": "&b\uD83D\uDD14 &6%s &7(Тихий &aвхід&7)",
+  "silentLeave": "&b\uD83D\uDD14 &6%s &7(Тихий &4вихід&7)",
+  "gameModeChanged": "&b\uD83D\uDD14 &6%s &r| &7%s &r→ &a%s",
+  "nearOnlyYou": "&b\uD83D\uDD14 &aПоряд нікого",
+  "nearSomebody": "&b\uD83D\uDD14 &cПоряд &r(%d) |&6",
+
+  "notConnected": "&4☒ &rВідсутнє з'єднання...",
+  "noPlayers": "&4☒ &rВідсутні гравці...",
+
+  "pingList": "&b⏳ &rПерелік пінгу:",
+  "pingListPlayer": "\n&b⏺ &6%s &r- %s",
+  "pingPlayerSuccess": "&b☑ &6%s &r- %s",
+  "pingPlayerNotFound": "&b☒ &6%s &4не знайдено",
+
+  "check": "&b⏺ &rТАБ: %d, Поряд: %d ",
+  "checkPos": "&a☑",
+  "checkNeg": "&4☒",
+
+  "nearListPlayer": "&b⏺ &6%s",
+
+  "listList": "&b☑ &rПерелік гравців:",
+  "listListPlayer": "\n&b⏺ &6%s &r| %s | Пінг: %s &r| Скін - %s\n%s",
+
+  "toggleDot": "&b⏺",
+  "toggleJoinLeaveOff": " &4JoinLeave &7(Тихі входи/виходи)",
+  "toggleJoinLeaveOn": " &aJoinLeave &7(Тихі входи/виходи)",
+  "toggleGameModeOff": " &4GameMode &7(Режими гри)",
+  "toggleGameModeOn": " &aGameMode &7(Режими гри)",
+  "toggleNearOff": " &4Near &7(Поряд)",
+  "toggleNearOn": " &aNear &7(Поряд)",
+
+  "uwuListPlayer": "&b⏺ &6%s &r- ",
+  "uwuGirl": "&dДівчина",
+  "uwuBoy": "&bХлопець",
+  "uwuMaybeGirl": "&dДівчина (Томбой?)",
+  "uwuMaybeBoy": "&bХлопець (Фембой?)",
+  "uwuTomboy": "&bТомбой",
+  "uwuFemboy": "&dФембой",
+  "uwuTomboyMaterial": "&6Томбойний матеріал",
+  "uwuFemboyMaterial": "&6Фембойний матеріал",
+
+  "brandCurrent": "&b⏺ &rБренд - &6%s",
+  "brandChanged": "&b⏺ &rНовий Бренд - &6%s &7(Перепідключись якщо ні)"
+}

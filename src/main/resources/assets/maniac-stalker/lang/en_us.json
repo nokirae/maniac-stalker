@@ -1,0 +1,48 @@
+{
+  "modmenu.name.maniacstalker": "Maniac-Stulker",
+  "modmenu.description.maniacstalker": "79 centimeters :3",
+
+  "silentJoin": "&b\uD83D\uDD14 &6%s &7(Silent &aJoin&7)",
+  "silentLeave": "&b\uD83D\uDD14 &6%s &7(Silent &4Leave&7)",
+  "gameModeChanged": "&b\uD83D\uDD14 &6%s &r| &7%s &r→ &a%s",
+  "nearOnlyYou": "&b\uD83D\uDD14 &aThere only you",
+  "nearSomebody": "&b\uD83D\uDD14 &cNear &r(%d) |&6",
+
+  "notConnected": "&4☒ &rNot connected...",
+  "noPlayers": "&4☒ &rNo players...",
+
+  "pingList": "&b⏳ &rPing list:",
+  "pingListPlayer": "\n&b⏺ &6%s &r- %s",
+  "pingPlayerSuccess": "&b☑ &6%s &r- %s",
+  "pingPlayerNotFound": "&b☒ &6%s &4not found",
+
+  "check": "&b⏺ &rTAB: %d, Near: %d ",
+  "checkPos": "&a☑",
+  "checkNeg": "&4☒",
+
+  "nearListPlayer": "&b⏺ &6%s",
+
+  "listList": "&b☑ &rPlayer list:",
+  "listListPlayer": "\n&b⏺ &6%s &r| %s | Ping: %s &r| Skin - %s\n%s",
+
+  "toggleDot": "&b⏺",
+  "toggleJoinLeaveOff": " &4JoinLeave",
+  "toggleJoinLeaveOn": " &aJoinLeave",
+  "toggleGameModeOff": " &4GameMode",
+  "toggleGameModeOn": " &aGameMode",
+  "toggleNearOff": " &4Near",
+  "toggleNearOn": " &aNear",
+
+  "uwuListPlayer": "&b⏺ &6%s &r- ",
+  "uwuGirl": "&dGirl",
+  "uwuBoy": "&bBoy",
+  "uwuMaybeGirl": "&dGirl (Tomboy?)",
+  "uwuMaybeBoy": "&bBoy (Femboy?)",
+  "uwuTomboy": "&bTomboy",
+  "uwuFemboy": "&dFemboy",
+  "uwuTomboyMaterial": "&6Tomboy Material",
+  "uwuFemboyMaterial": "&6Femboy Material",
+
+  "brandCurrent": "&b⏺ &rBrand - &6%s",
+  "brandChanged": "&b⏺ &rNew Brand - &6%s &7(Reconnect if not)"
+}
