@@ -23,7 +23,8 @@
   "nearListPlayer": "&b⏺ &6%s",
 
   "listList": "&b☑ &rПерелік гравців:",
-  "listListPlayer": "\n&b⏺ &6%s &r| %s | Пінг: %s &r| Скін - %s\n%s",
+  "listListPlayer": "\n&b⏺ &6%s &r| %s | Пінг: %s &r| Скін - %s\n",
+  "listCopyUUID": "Натисність, щоб скопіювати",
 
   "toggleDot": "&b⏺",
   "toggleJoinLeaveOff": " &4JoinLeave &7(Тихі входи/виходи)",

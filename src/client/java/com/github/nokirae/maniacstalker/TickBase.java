@@ -1,9 +1,13 @@
 package com.github.nokirae.maniacstalker;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+
+//import net.minecraft.client.network.AbstractClientPlayerEntity;
+//import net.minecraft.text.MutableText;
+//import net.minecraft.text.Text;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -11,17 +15,17 @@ import java.util.stream.Collectors;
 public class TickBase {
     public static void registerTickBasedReaders() {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
+            if (client.player == null || client.level == null || client.getConnection() == null) {
                 if (!Variables.lastPlayerMap.isEmpty()) {
                     Variables.lastPlayerMap.clear();
                 }
                 return;
             }
 
-            if (client.world.getTime() % 20 != 0) return;
+            if (client.level.getGameTime() % 20 != 0) return;
 
             if (Variables.moduleJoinLeave) {
-                Map<UUID, String> currentPlayerMap = client.getNetworkHandler().getPlayerList().stream()
+                Map<UUID, String> currentPlayerMap = client.getConnection().getOnlinePlayers().stream()
                         .collect(Collectors.toMap(
                                 entry -> entry.getProfile().id(),
                                 entry -> entry.getProfile().name()
@@ -46,7 +50,7 @@ public class TickBase {
                         }
 
                         if (!skip) {
-                            client.player.sendMessage(Funky.reColor(Text.translatable("silentJoin", entry.getValue())), false);
+                            client.player.sendSystemMessage(Funky.reColor(Component.translatable("silentJoin", entry.getValue())));
                         }
                     }
                 }
@@ -65,7 +69,7 @@ public class TickBase {
                         }
 
                         if (!skip) {
-                            client.player.sendMessage(Funky.reColor(Text.translatable("silentLeave", entry.getValue())), false);
+                            client.player.sendSystemMessage(Funky.reColor(Component.translatable("silentLeave", entry.getValue())));
                         }
                     }
                 }
@@ -89,10 +93,10 @@ public class TickBase {
             }
 
             if (Variables.moduleGameMode) {
-                Map<String, String> currentGameModeMap = client.getNetworkHandler().getPlayerList().stream()
+                Map<String, String> currentGameModeMap = client.getConnection().getOnlinePlayers().stream()
                         .collect(Collectors.toMap(
                                 entry -> entry.getProfile().name(),
-                                entry -> entry.getGameMode().asString(),
+                                entry -> entry.getGameMode().toString(),
                                 (existing, replacement) -> replacement
                         ));
 
@@ -107,7 +111,7 @@ public class TickBase {
                     }
                     String lastGameMode = Variables.lastGameModeMap.get(entry.getKey());
                     if (!entry.getValue().equals(lastGameMode)) {
-                        client.player.sendMessage(Funky.reColor(Text.translatable("gameModeChanged", entry.getKey(), lastGameMode, entry.getValue())), false);
+                        client.player.sendSystemMessage(Funky.reColor(Component.translatable("gameModeChanged", entry.getKey(), lastGameMode, entry.getValue())));
                     }
                 }
 
@@ -115,14 +119,14 @@ public class TickBase {
             }
 
             if (Variables.moduleNear) {
-                List<AbstractClientPlayerEntity> NearPlayers = client.world.getPlayers();
+                List<AbstractClientPlayer> NearPlayers = client.level.players();
                 if (Variables.lastNearPlayers != NearPlayers.size()) {
-                    MutableText message = Text.literal("");
+                    MutableComponent message = Component.literal("");
 
                     if (NearPlayers.size() > 1) {
-                        message.append(Funky.reColor(Text.translatable("nearSomebody", NearPlayers.size())));
-                        for (AbstractClientPlayerEntity ACPE : NearPlayers) {
-                            message.append(Text.literal(" " + ACPE.getGameProfile().name()));
+                        message.append(Funky.reColor(Component.translatable("nearSomebody", NearPlayers.size())));
+                        for (AbstractClientPlayer ACP : NearPlayers) {
+                            message.append(Component.literal(" " + ACP.getGameProfile().name()));
                             /*
                             if (Variables.modulePowerNear) {
                                 message.append(Text.literal("Age: " + ACPE.age + ", DeathTime: " + ACPE.deathTime + ", Dist. Traveled: " + ACPE.distanceTraveled + ", Exp: " + ACPE.totalExperience));
@@ -131,10 +135,10 @@ public class TickBase {
                     }
 
                     else {
-                        message.append(Funky.reColor(Text.translatable("nearOnlyYou")));
+                        message.append(Funky.reColor(Component.translatable("nearOnlyYou")));
                     }
 
-                    client.player.sendMessage(message, false);
+                    client.player.sendSystemMessage(message);
 
                     Variables.lastNearPlayers = NearPlayers.size();
                 }

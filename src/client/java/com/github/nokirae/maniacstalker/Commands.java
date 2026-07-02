@@ -2,19 +2,25 @@ package com.github.nokirae.maniacstalker;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.network.PlayerListEntry;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
 
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.argument;
-import static net.fabricmc.fabric.api.client.command.v2.ClientCommandManager.literal;
+//import net.minecraft.client.MinecraftClient;
+//import net.minecraft.client.network.AbstractClientPlayerEntity;
+//import net.minecraft.client.network.PlayerListEntry;
+//import net.minecraft.text.MutableText;
+//import net.minecraft.text.Text;
+
+import java.util.*;
+
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 
 public class Commands {
     public static void registerCommands() {
@@ -22,24 +28,24 @@ public class Commands {
             dispatcher.register(literal("ms")
                     .then(literal("ping")
                             .executes(context -> {
-                                final MinecraftClient client = context.getSource().getClient();
-                                if (client.player == null || client.getNetworkHandler() == null) {
-                                    context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                final Minecraft client = context.getSource().getClient();
+                                if (client.player == null || client.getConnection() == null) {
+                                    context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                     return 0;
                                 }
 
-                                Collection<PlayerListEntry> players = client.getNetworkHandler().getPlayerList();
+                                Collection<PlayerInfo> players = client.getConnection().getOnlinePlayers();
                                 if (players.isEmpty()) {
-                                    context.getSource().sendFeedback(Funky.reColor(Text.translatable("noPlayers")));
+                                    context.getSource().sendFeedback(Funky.reColor(Component.translatable("noPlayers")));
                                     return 1;
                                 }
 
-                                List<PlayerListEntry> sortedPlayers = new ArrayList<>(players);
-                                sortedPlayers.sort(Comparator.comparingInt(PlayerListEntry::getLatency));
+                                List<PlayerInfo> sortedPlayers = new ArrayList<>(players);
+                                sortedPlayers.sort(Comparator.comparingInt(PlayerInfo::getLatency));
 
-                                MutableText message = Funky.reColor(Text.translatable("pingList"));
-                                for (PlayerListEntry playerEntry : sortedPlayers) {
-                                    message.append(Funky.reColor(Text.translatable("pingListPlayer", playerEntry.getProfile().name(), Funky.formatPing(playerEntry.getLatency()))));
+                                MutableComponent message = Funky.reColor(Component.translatable("pingList"));
+                                for (PlayerInfo playerEntry : sortedPlayers) {
+                                    message.append(Funky.reColor(Component.translatable("pingListPlayer", playerEntry.getProfile().name(), Funky.formatPing(playerEntry.getLatency()))));
                                 }
 
                                 context.getSource().sendFeedback(message);
@@ -48,60 +54,60 @@ public class Commands {
                             .then(argument("player", StringArgumentType.greedyString())
                                     .executes(context -> {
                                         String playerName = StringArgumentType.getString(context, "player");
-                                        final MinecraftClient client = context.getSource().getClient();
+                                        final Minecraft client = context.getSource().getClient();
 
-                                        if (client.player == null || client.getNetworkHandler() == null) {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                        if (client.player == null || client.getConnection() == null) {
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                             return 0;
                                         }
 
-                                        PlayerListEntry targetPlayer = client.getNetworkHandler().getPlayerList().stream()
+                                        PlayerInfo targetPlayer = client.getConnection().getOnlinePlayers().stream()
                                                 .filter(p -> p.getProfile().name().equalsIgnoreCase(playerName))
                                                 .findFirst()
                                                 .orElse(null);
 
                                         if (targetPlayer != null) {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("pingPlayerSuccess", playerName, Funky.formatPing(targetPlayer.getLatency()))));
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("pingPlayerSuccess", playerName, Funky.formatPing(targetPlayer.getLatency()))));
                                         } else {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("pingPlayerNotFound", playerName)));
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("pingPlayerNotFound", playerName)));
                                         }
                                         return 1;
                                     }))
                     )
                     .then(literal("check").executes(context -> {
-                        final MinecraftClient client = context.getSource().getClient();
+                        final Minecraft client = context.getSource().getClient();
 
-                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                             return 0;
                         }
 
-                        int tabCount = client.getNetworkHandler().getPlayerList().size();
-                        int worldCount = client.world.getPlayers().size();
+                        int tabCount = client.getConnection().getOnlinePlayers().size();
+                        int worldCount = client.level.players().size();
 
-                        MutableText message = Funky.reColor(Text.translatable("check", tabCount, worldCount));
+                        MutableComponent message = Funky.reColor(Component.translatable("check", tabCount, worldCount));
 
                         if (tabCount == worldCount) {
-                            message.append(Funky.reColor(Text.translatable("checkPos")));
+                            message.append(Funky.reColor(Component.translatable("checkPos")));
                         } else {
-                            message.append(Funky.reColor(Text.translatable("checkNeg")));
+                            message.append(Funky.reColor(Component.translatable("checkNeg")));
                         }
 
                         context.getSource().sendFeedback(message);
                         return 1;
                     }))
                     .then(literal("near").executes(context -> {
-                        final MinecraftClient client = context.getSource().getClient();
+                        final Minecraft client = context.getSource().getClient();
 
-                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                             return 0;
                         }
 
-                        List<AbstractClientPlayerEntity> Near = client.world.getPlayers();
+                        List<AbstractClientPlayer> Near = client.level.players();
 
-                        for (AbstractClientPlayerEntity ACPE : Near) {
-                            client.player.sendMessage(Funky.reColor(Text.translatable("nearListPlayer", ACPE.getGameProfile().name())), false);
+                        for (AbstractClientPlayer ACP : Near) {
+                            client.player.sendSystemMessage(Funky.reColor(Component.translatable("nearListPlayer", ACP.getGameProfile().name())));
                             /*
                             if (Variables.modulePowerNear) {
                                 client.player.sendMessage(Text.of("Age: " + ACPE.age + ", DeathTime: " + ACPE.deathTime + ", Dist. Traveled: " + ACPE.distanceTraveled + ", Exp: " + ACPE.totalExperience), false);
@@ -111,29 +117,41 @@ public class Commands {
                         return 1;
                     }))
                     .then(literal("list").executes(context -> {
-                        final MinecraftClient client = context.getSource().getClient();
+                        final Minecraft client = context.getSource().getClient();
 
-                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                             return 0;
                         }
 
-                        Collection<PlayerListEntry> Players = client.getNetworkHandler().getPlayerList();
+                        Collection<PlayerInfo> Players = client.getConnection().getOnlinePlayers();
 
-                        for (PlayerListEntry PLE : Players) {
-                            MutableText message = Funky.reColor(Text.translatable("listList"));
-                            message.append(Funky.reColor(Text.translatable("listListPlayer", PLE.getProfile().name(), PLE.getGameMode().asString(), Funky.formatPing(PLE.getLatency()), PLE.getSkinTextures().model().name(), PLE.getProfile().id().toString())));
+                        context.getSource().sendFeedback(Funky.reColor(Component.translatable("listList")));
 
-                            client.player.sendMessage(message, false);
+                        for (PlayerInfo PI : Players) {
+                            // context.getSource().sendFeedback(Funky.reColor(Component.translatable("listListPlayer", PI.getProfile().name(), PI.getGameMode().toString(), Funky.formatPing(PI.getLatency()), PI.getSkin().model().name(), PI.getProfile().id().toString())));
+                            UUID playerUuid = PI.getProfile().id();
+                            Component uuidComponent = Component.literal(playerUuid.toString())
+                                    .withStyle(style -> style
+                                            .withClickEvent(new ClickEvent.CopyToClipboard(playerUuid.toString()))
+                                            .withHoverEvent(new HoverEvent.ShowText(Funky.reColor(Component.translatable("listCopyUUID"))))
+                                            .withUnderlined(true)
+                                    );
+
+                            Component message = Funky.reColor(Component.translatable("listListPlayer", PI.getProfile().name(), PI.getGameMode().toString(), Funky.formatPing(PI.getLatency()), PI.getSkin().model().name()))
+                                .append(" ")
+                                .append(uuidComponent);
+
+                            client.player.sendSystemMessage(message);
                         }
 
                         return 1;
                     }))
                     .then(literal("toggle").executes(context -> {
-                                        final MinecraftClient client = context.getSource().getClient();
+                                        final Minecraft client = context.getSource().getClient();
 
-                                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                             return 0;
                                         }
 
@@ -141,145 +159,145 @@ public class Commands {
                                         Variables.moduleGameMode = !Variables.moduleGameMode;
                                         Variables.moduleNear = !Variables.moduleNear;
 
-                                        MutableText message = Funky.reColor(Text.translatable("toggleDot"));
+                                        MutableComponent message = Funky.reColor(Component.translatable("toggleDot"));
 
                                         if (Variables.moduleJoinLeave) {
-                                            message.append(Funky.reColor(Text.translatable("toggleJoinLeaveOn")));
+                                            message.append(Funky.reColor(Component.translatable("toggleJoinLeaveOn")));
                                         } else {
-                                            message.append(Funky.reColor(Text.translatable("toggleJoinLeaveOff")));
+                                            message.append(Funky.reColor(Component.translatable("toggleJoinLeaveOff")));
                                         }
 
                                         if (Variables.moduleGameMode) {
-                                            message.append(Funky.reColor(Text.translatable("toggleGameModeOn")));
+                                            message.append(Funky.reColor(Component.translatable("toggleGameModeOn")));
                                         } else {
-                                            message.append(Funky.reColor(Text.translatable("toggleGameModeOff")));
+                                            message.append(Funky.reColor(Component.translatable("toggleGameModeOff")));
                                         }
 
                                         if (Variables.moduleNear) {
-                                            message.append(Funky.reColor(Text.translatable("toggleNearOn")));
+                                            message.append(Funky.reColor(Component.translatable("toggleNearOn")));
                                         } else {
-                                            message.append(Funky.reColor(Text.translatable("toggleNearOff")));
+                                            message.append(Funky.reColor(Component.translatable("toggleNearOff")));
                                         }
 
-                                        client.player.sendMessage(message, false);
+                                        client.player.sendSystemMessage(message);
 
                                         return 1;
                                     })
                                     .then(literal("JoinLeave").executes(context -> {
-                                        final MinecraftClient client = context.getSource().getClient();
+                                        final Minecraft client = context.getSource().getClient();
 
-                                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                             return 0;
                                         }
 
                                         Variables.moduleJoinLeave = !Variables.moduleJoinLeave;
 
-                                        MutableText message = Funky.reColor(Text.translatable("toggleDot"));
+                                        MutableComponent message = Funky.reColor(Component.translatable("toggleDot"));
 
                                         if (Variables.moduleJoinLeave) {
-                                            message.append(Funky.reColor(Text.translatable("toggleJoinLeaveOn")));
+                                            message.append(Funky.reColor(Component.translatable("toggleJoinLeaveOn")));
                                         } else {
-                                            message.append(Funky.reColor(Text.translatable("toggleJoinLeaveOff")));
+                                            message.append(Funky.reColor(Component.translatable("toggleJoinLeaveOff")));
                                         }
 
-                                        client.player.sendMessage(message, false);
+                                        client.player.sendSystemMessage(message);
 
                                         return 1;
                                     }))
                                     .then(literal("GameMode").executes(context -> {
-                                        final MinecraftClient client = context.getSource().getClient();
+                                        final Minecraft client = context.getSource().getClient();
 
-                                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                             return 0;
                                         }
 
                                         Variables.moduleGameMode = !Variables.moduleGameMode;
 
-                                        MutableText message = Funky.reColor(Text.translatable("toggleDot"));
+                                        MutableComponent message = Funky.reColor(Component.translatable("toggleDot"));
 
                                         if (Variables.moduleGameMode) {
-                                            message.append(Funky.reColor(Text.translatable("toggleGameModeOn")));
+                                            message.append(Funky.reColor(Component.translatable("toggleGameModeOn")));
                                         } else {
-                                            message.append(Funky.reColor(Text.translatable("toggleGameModeOff")));
+                                            message.append(Funky.reColor(Component.translatable("toggleGameModeOff")));
                                         }
 
-                                        client.player.sendMessage(message, false);
+                                        client.player.sendSystemMessage(message);
 
                                         return 1;
                                     }))
                                     .then(literal("Near").executes(context -> {
-                                        final MinecraftClient client = context.getSource().getClient();
+                                        final Minecraft client = context.getSource().getClient();
 
-                                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                             return 0;
                                         }
 
                                         Variables.moduleNear = !Variables.moduleNear;
 
-                                        MutableText message = Funky.reColor(Text.translatable("toggleDot"));
+                                        MutableComponent message = Funky.reColor(Component.translatable("toggleDot"));
 
                                         if (Variables.moduleNear) {
-                                            message.append(Funky.reColor(Text.translatable("toggleNearOn")));
+                                            message.append(Funky.reColor(Component.translatable("toggleNearOn")));
                                         } else {
-                                            message.append(Funky.reColor(Text.translatable("toggleNearOff")));
+                                            message.append(Funky.reColor(Component.translatable("toggleNearOff")));
                                         }
 
-                                        client.player.sendMessage(message, false);
+                                        client.player.sendSystemMessage(message);
 
                                         return 1;
                                     }))
                     )
                     .then(literal("uwu").executes(context -> {
-                        final MinecraftClient client = context.getSource().getClient();
+                        final Minecraft client = context.getSource().getClient();
 
-                        if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                        if (client.player == null || client.level == null || client.getConnection() == null) {
+                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                             return 0;
                         }
 
-                        Collection<PlayerListEntry> Players = client.getNetworkHandler().getPlayerList();
+                        Collection<PlayerInfo> Players = client.getConnection().getOnlinePlayers();
 
-                        for (PlayerListEntry PLE : Players) {
-                            MutableText message = Funky.reColor(Text.translatable("uwuListPlayer", PLE.getProfile().name()));
-                            Text displayNameComponent = PLE.getDisplayName();
+                        for (PlayerInfo PI : Players) {
+                            MutableComponent message = Funky.reColor(Component.translatable("uwuListPlayer", PI.getProfile().name()));
+                            Component displayNameComponent = PI.getTabListDisplayName();
                             String fullRowText;
 
                             if (displayNameComponent != null) {
                                 fullRowText = displayNameComponent.getString();
                             } else {
-                                fullRowText = PLE.getProfile().name();
+                                fullRowText = PI.getProfile().name();
                             }
 
                             if (fullRowText.contains("♂")) {
-                                if (PLE.getSkinTextures().model().name().contains("SLIM")) {
-                                    message.append(Funky.reColor(Text.translatable("uwuFemboyMaterial")));
+                                if (PI.getSkin().model().name().contains("SLIM")) {
+                                    message.append(Funky.reColor(Component.translatable("uwuFemboyMaterial")));
                                 } else {
-                                    message.append(Funky.reColor(Text.translatable("uwuBoy")));
+                                    message.append(Funky.reColor(Component.translatable("uwuBoy")));
                                 }
                             } else if (fullRowText.contains("♀")) {
-                                if (PLE.getSkinTextures().model().name().contains("SLIM")) {
-                                    message.append(Funky.reColor(Text.translatable("uwuGirl")));
+                                if (PI.getSkin().model().name().contains("SLIM")) {
+                                    message.append(Funky.reColor(Component.translatable("uwuGirl")));
                                 } else {
-                                    message.append(Funky.reColor(Text.translatable("uwuTomboyMaterial")));
+                                    message.append(Funky.reColor(Component.translatable("uwuTomboyMaterial")));
                                 }
                             } else if (fullRowText.contains("⚥")) {
-                                if (PLE.getSkinTextures().model().name().contains("SLIM")) {
-                                    message.append(Funky.reColor(Text.translatable("uwuFemboy")));
+                                if (PI.getSkin().model().name().contains("SLIM")) {
+                                    message.append(Funky.reColor(Component.translatable("uwuFemboy")));
                                 } else {
-                                    message.append(Funky.reColor(Text.translatable("uwuTomboy")));
+                                    message.append(Funky.reColor(Component.translatable("uwuTomboy")));
                                 }
                             } else {
-                                if (PLE.getSkinTextures().model().name().contains("SLIM")) {
-                                    message.append(Funky.reColor(Text.translatable("uwuMaybeGirl")));
+                                if (PI.getSkin().model().name().contains("SLIM")) {
+                                    message.append(Funky.reColor(Component.translatable("uwuMaybeGirl")));
                                 } else {
-                                    message.append(Funky.reColor(Text.translatable("uwuMaybeBoy")));
+                                    message.append(Funky.reColor(Component.translatable("uwuMaybeBoy")));
                                 }
                             }
 
-                            client.player.sendMessage(message, false);
+                            client.player.sendSystemMessage(message);
                         }
 
                         return 1;
@@ -287,28 +305,28 @@ public class Commands {
 
                     .then(literal("brand")
                             .executes(context -> {
-                                final MinecraftClient client = context.getSource().getClient();
-                                if (client.player == null || client.getNetworkHandler() == null) {
-                                    context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                final Minecraft client = context.getSource().getClient();
+                                if (client.player == null || client.getConnection() == null) {
+                                    context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                     return 0;
                                 }
 
-                                context.getSource().sendFeedback(Funky.reColor(Text.translatable("brandCurrent", Variables.customBrand)));
+                                context.getSource().sendFeedback(Funky.reColor(Component.translatable("brandCurrent", Variables.customBrand)));
                                 return 1;
                             })
                             .then(argument("newBrand", StringArgumentType.greedyString())
                                     .executes(context -> {
                                         String newBrand = StringArgumentType.getString(context, "newBrand");
-                                        final MinecraftClient client = context.getSource().getClient();
+                                        final Minecraft client = context.getSource().getClient();
 
-                                        if (client.player == null || client.getNetworkHandler() == null) {
-                                            context.getSource().sendFeedback(Funky.reColor(Text.translatable("notConnected")));
+                                        if (client.player == null || client.getConnection() == null) {
+                                            context.getSource().sendFeedback(Funky.reColor(Component.translatable("notConnected")));
                                             return 0;
                                         }
 
                                         Variables.customBrand = newBrand;
 
-                                        context.getSource().sendFeedback(Funky.reColor(Text.translatable("brandChanged", Variables.customBrand)));
+                                        context.getSource().sendFeedback(Funky.reColor(Component.translatable("brandChanged", Variables.customBrand)));
                                         return 1;
                                     }))
                     )

@@ -23,7 +23,8 @@
   "nearListPlayer": "&b⏺ &6%s",
 
   "listList": "&b☑ &rPlayer list:",
-  "listListPlayer": "\n&b⏺ &6%s &r| %s | Ping: %s &r| Skin - %s\n%s",
+  "listListPlayer": "\n&b⏺ &6%s &r| %s | Ping: %s &r| Skin - %s\n",
+  "listCopyUUID": "Click to Copy",
 
   "toggleDot": "&b⏺",
   "toggleJoinLeaveOff": " &4JoinLeave",
