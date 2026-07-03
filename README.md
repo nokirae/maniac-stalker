@@ -3,6 +3,9 @@
   <br>
   <h1 align="center">Maniac-Stalker Fabric mod (Minecraft 1.21.7+)</h1>
 </p>
+<p align="center">
+  <b>English</b> | <a href="/README_uk-UA.md">Українська</a>
+</p>
 
 The mod is designed to process and display data received from the server about players (usually from TAB).
 
