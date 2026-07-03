@@ -20,6 +20,4 @@ The mod includes the following commands:
 - <code>/ms near</code> - Displays everyone nearby;
 - <code>/ms list</code> - Displays information about players (UUID, ping, game mode);
 - <code>/ms toggle [module]</code> - Switches all or the specified tracking module (joinleave, gamemode, near);
-- <code>/ms uwu</code> - A humorous command to search for femboys and tomboys on the server (works better if DisplayName() contains a gender symbol (e.g. from the HuGender plugin)).
-
-If you want to make changes, please fork the repository (pull request if important), as this repository will be archived in the future and its development will be discontinued.
+- <code>/ms uwu</code> - A humorous command to search for femboys and tomboys on the server (works better if getTabListDisplayName() contains a gender symbol (e.g. from the HuGender plugin)).
