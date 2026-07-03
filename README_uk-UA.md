@@ -3,6 +3,9 @@
   <br>
   <h1 align="center">Maniac-Stalker Fabric мод (Minecraft 1.21.7+)</h1>
 </p>
+<p align="center">
+  <a href="/README.md">English</a> | <b>Українська</b>
+</p>
 
 Мод спрямований на обробку та вивід даних отриманих від сервера стосовно гравців (зазвичай від TAB).
 
